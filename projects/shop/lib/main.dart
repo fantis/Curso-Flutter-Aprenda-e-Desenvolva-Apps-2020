@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:shop/util/appRoutes.dart';
+import 'package:shop/views/productDetailScreen.dart';
 import 'package:shop/views/productOverviewScreen.dart';
 
 void main() => runApp(MyApp());
@@ -14,6 +16,7 @@ class MyApp extends StatelessWidget {
         fontFamily: 'Lato',
       ),
       home: ProductOverviewScreen(),
+      routes: {AppRoutes.PRODUCT_DETAIL: (ctx) => ProductDetailScreen()},
     );
   }
 }
