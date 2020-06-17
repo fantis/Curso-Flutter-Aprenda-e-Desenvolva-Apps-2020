@@ -6,12 +6,13 @@ class Products with ChangeNotifier {
   List<Product> _items = DUMMY_PRODUCTS;
   // List<Product> _items = [];
 
-  List<Product> get items => [ ..._items ];
+  List<Product> get items => [..._items];
   // List<Product> get items {
   //   List<Product> newItems;
   //   for (var item in items) {
   //     newItems.add(item);
   //   }
+  //   return newItems;
   // }
 
   void addProduct(Product product) {

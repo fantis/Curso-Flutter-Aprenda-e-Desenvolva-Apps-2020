@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shop/providers/products.dart';
-// import 'package:provider/provider.dart';
 
 import 'package:shop/util/appRoutes.dart';
 import 'package:shop/views/productDetailScreen.dart';
