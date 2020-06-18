@@ -73,4 +73,9 @@ class Cart with ChangeNotifier {
     // notifying listeners related
     notifyListeners();
   }
+
+  void clear() {
+    this._items = {};
+    notifyListeners();
+  }
 }

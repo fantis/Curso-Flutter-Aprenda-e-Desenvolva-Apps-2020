@@ -16,20 +16,40 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
       appBar: AppBar(
         title: Text(product.title),
       ),
-      // body: Column(
-      //   children: <Widget>[
-      //     Text(CounterProvider.of(context).state.value.toString()),
-      //     RaisedButton(
-      //       child: Text('+'),
-      //       onPressed: () {
-      //         setState(() {
-      //           CounterProvider.of(context).state.inc();
-      //         });
-      //         print(CounterProvider.of(context).state.value);
-      //       },
-      //     ),
-      //   ],
-      // )
+      body: SingleChildScrollView(
+        child: Column(
+          children: <Widget>[
+            Container(
+              height: 300,
+              width: double.infinity,
+              child: Image.network(
+                product.imageUrl,
+                fit: BoxFit.cover,
+              ),
+            ),
+            SizedBox(height: 10),
+            Text(
+              'R\$ ${product.price}',
+              style: TextStyle(
+                color: Colors.grey,
+                fontSize: 25,
+              ),
+            ),
+            SizedBox(height: 10),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 10),
+              width: double.infinity,
+              child: Text(
+                product.description,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 20,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
