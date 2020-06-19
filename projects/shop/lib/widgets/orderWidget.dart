@@ -67,37 +67,6 @@ class _OrderWidgetState extends State<OrderWidget> {
                 }).toList(),
               ),
             ),
-          // if (this._expanded)
-          // Container(
-          //   padding: EdgeInsets.symmetric(
-          //     horizontal: 15,
-          //     vertical: double.infinity,
-          //   ),
-          //   height: (widget.order.products.length * 25.0) + 10,
-          //   child: ListView(
-          //     children: widget.order.products.map((product) {
-          //       return Row(
-          //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          //         children: <Widget>[
-          //           Text(
-          //             product.title,
-          //             style: TextStyle(
-          //               fontSize: 18,
-          //               fontWeight: FontWeight.bold,
-          //             ),
-          //           ),
-          //           Text(
-          //             '${product.quantity} x R\$ ${product.price}',
-          //             style: TextStyle(
-          //               fontSize: 18,
-          //               color: Colors.grey,
-          //             ),
-          //           ),
-          //         ],
-          //       );
-          //     }).toList(),
-          //   ),
-          // ),
         ],
       ),
     );
