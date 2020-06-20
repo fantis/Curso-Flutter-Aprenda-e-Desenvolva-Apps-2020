@@ -1,8 +1,7 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shop/providers/product.dart';
-import 'package:shop/widgets/appDrawer.dart';
+import 'package:shop/providers/products.dart';
 
 class ProductFormScreen extends StatefulWidget {
   @override
@@ -24,6 +23,25 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
     _imageUrlFocusNode.addListener(this._updateImage);
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    if (_formData.isEmpty) {
+      final product = ModalRoute.of(context).settings.arguments as Product;
+      if (product != null) {
+        _formData['id'] = product.id;
+        _formData['title'] = product.title;
+        _formData['description'] = product.description;
+        _formData['price'] = product.price;
+        _formData['imageUrl'] = product.imageUrl;
+        _imageUrlController.text = _formData['imageUrl'];
+      } else {
+        _formData['price'] = '';
+      }
+    }
+  }
+
   void _updateImage() {
     // just update the user graphical interface
     if (isValidImageUrl(_imageUrlController.text)) {
@@ -32,13 +50,11 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
   }
 
   bool isValidImageUrl(String url) {
-    print(url);
-
     bool isStartsWithHttp = url.toLowerCase().startsWith('http://');
     bool isStartsWithHttps = url.toLowerCase().startsWith('https://');
     bool isEndsWithPng = url.toLowerCase().endsWith('.png');
-    bool isEndsWithJpg = url.toLowerCase().endsWith(',jpg');
-    bool isEndsWithJpeg = url.toLowerCase().endsWith(',jpeg');
+    bool isEndsWithJpg = url.toLowerCase().endsWith('.jpg');
+    bool isEndsWithJpeg = url.toLowerCase().endsWith('.jpeg');
     return (isStartsWithHttp || isStartsWithHttps) &&
         (isEndsWithPng || isEndsWithJpg || isEndsWithJpeg);
   }
@@ -59,16 +75,27 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
     }
 
     _form.currentState.save();
-    final newProduct = Product(
-      id: Random().nextDouble().toString(),
+
+    final product = Product(
+      id: _formData['id'],
       title: _formData['title'],
       description: _formData['description'],
       price: _formData['price'],
-      imageUrl: _formData['imageUrl '],
+      imageUrl: _formData['imageUrl'],
     );
-    print(newProduct.id);
-    print(newProduct.title);
-    print(newProduct.price);
+
+    print('salvando produto');
+    print(product.title);
+    print(product.imageUrl);
+
+    final productsProvider = Provider.of<Products>(context, listen: false);
+    if (product.id == null) {
+      productsProvider.addProduct(product);
+    } else {
+      productsProvider.updateProduct(product);
+    }
+
+    Navigator.of(context).pop();
   }
 
   @override
@@ -92,6 +119,7 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
           child: ListView(
             children: <Widget>[
               TextFormField(
+                initialValue: this._formData['title'],
                 decoration: InputDecoration(labelText: 'Título'),
                 textInputAction: TextInputAction.next,
                 onFieldSubmitted: (_) {
@@ -109,6 +137,7 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
                 },
               ),
               TextFormField(
+                initialValue: this._formData['price'].toString(),
                 decoration: InputDecoration(labelText: 'Preço'),
                 focusNode: _priceFocusNode,
                 keyboardType: TextInputType.numberWithOptions(
@@ -131,6 +160,7 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
                 },
               ),
               TextFormField(
+                initialValue: this._formData['description'],
                 decoration: InputDecoration(labelText: 'Descrição'),
                 focusNode: _descriptionFocusNode,
                 maxLines: 3,
@@ -138,7 +168,6 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
                 onSaved: (value) => _formData['description'] = value,
                 validator: (value) {
                   bool isEmpty = value.trim().isEmpty;
-                  var newPrice = double.tryParse(value);
                   bool isInvalid = value.trim().length <= 10;
                   if (isEmpty || isInvalid) {
                     return 'Informe uma descrição válida com no minimo 10 caracteres';

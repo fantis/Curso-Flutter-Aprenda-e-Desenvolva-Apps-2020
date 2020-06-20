@@ -11,6 +11,8 @@ class ProductsScreen extends StatelessWidget {
     final productsData = Provider.of<Products>(context);
     final products = productsData.items;
 
+    print('ProductsScreen - metodo build');
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Gerenciar Produtos'),
@@ -18,8 +20,7 @@ class ProductsScreen extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.add),
             onPressed: () {
-              Navigator.of(context)
-                  .pushNamed(AppRoutes.PRODUCT_FORM);
+              Navigator.of(context).pushNamed(AppRoutes.PRODUCT_FORM);
             },
           ),
         ],
