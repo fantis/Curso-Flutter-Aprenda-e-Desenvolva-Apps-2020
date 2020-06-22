@@ -11,8 +11,6 @@ class ProductsScreen extends StatelessWidget {
     final productsData = Provider.of<Products>(context);
     final products = productsData.items;
 
-    print('ProductsScreen - metodo build');
-
     return Scaffold(
       appBar: AppBar(
         title: Text('Gerenciar Produtos'),

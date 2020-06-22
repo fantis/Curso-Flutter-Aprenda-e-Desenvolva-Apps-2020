@@ -1,6 +1,8 @@
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:shop/data/dummyData.dart';
 import 'package:shop/providers/product.dart';
 
@@ -17,15 +19,34 @@ class Products with ChangeNotifier {
     return _items.where((prod) => prod.isFavorite).toList();
   }
 
-  void addProduct(Product product) {
-    this._items.add(new Product(
-          id: Random().nextDouble().toString(),
-          title: product.title,
-          description: product.description,
-          price: product.price,
-          imageUrl: product.imageUrl,
-        ));
-    notifyListeners();
+  Future<void> addProduct(Product product) {
+    const url = 'https://rubenscp-flutter-shop.firebaseio.com/products';
+
+    return http
+        .post(
+      url,
+      body: json.encode(
+        {
+          'title': product.title,
+          'description': product.description,
+          'price': product.price,
+          'imageUrl': product.imageUrl,
+          'isFavorite': product.isFavorite,
+        },
+      ),
+    )
+        .then((response) {
+      print(json.decode(response.body));
+
+      this._items.add(new Product(
+            id: json.decode(response.body)['name'],
+            title: product.title,
+            description: product.description,
+            price: product.price,
+            imageUrl: product.imageUrl,
+          ));
+      notifyListeners();
+    });
   }
 
   void updateProduct(Product product) {
