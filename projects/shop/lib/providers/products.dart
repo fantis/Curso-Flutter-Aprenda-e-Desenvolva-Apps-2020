@@ -19,11 +19,10 @@ class Products with ChangeNotifier {
     return _items.where((prod) => prod.isFavorite).toList();
   }
 
-  Future<void> addProduct(Product product) {
-    const url = 'https://rubenscp-flutter-shop.firebaseio.com/products';
+  Future<void> addProduct(Product product) async {
+    const url = 'https://rubenscp-flutter-shop.firebaseio.com/products.json';
 
-    return http
-        .post(
+    final response = await http.post(
       url,
       body: json.encode(
         {
@@ -34,19 +33,16 @@ class Products with ChangeNotifier {
           'isFavorite': product.isFavorite,
         },
       ),
-    )
-        .then((response) {
-      print(json.decode(response.body));
+    );
 
-      this._items.add(new Product(
-            id: json.decode(response.body)['name'],
-            title: product.title,
-            description: product.description,
-            price: product.price,
-            imageUrl: product.imageUrl,
-          ));
-      notifyListeners();
-    });
+    this._items.add(new Product(
+          id: json.decode(response.body)['name'],
+          title: product.title,
+          description: product.description,
+          price: product.price,
+          imageUrl: product.imageUrl,
+        ));
+    notifyListeners();
   }
 
   void updateProduct(Product product) {
