@@ -1,0 +1,32 @@
+{
+  "products" : {
+    "-MAWd_gB0lGx1VQ9-N8W" : {
+      "description" : "Special Drone",
+      "imageUrl" : "https://st2.depositphotos.com/4079177/6529/i/950/depositphotos_65298555-stock-photo-flying-drone-with-camera-on.jpg",
+      "isFavorite" : false,
+      "price" : 1200.0,
+      "title" : "Drone"
+    },
+    "-MAWecrPv7Kiw4QmFr0A" : {
+      "description" : "A red shirt - it is pretty red!",
+      "imageUrl" : "https://cdn.pixabay.com/photo/2016/10/02/22/17/red-t-shirt-1710578_1280.jpg",
+      "isFavorite" : false,
+      "price" : 55.56,
+      "title" : "Red Shirt"
+    },
+    "-MAWecrPv7Kiw4QmFr0B" : {
+      "description" : "A nice pair of trousers.",
+      "imageUrl" : "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Trousers%2C_dress_%28AM_1960.022-8%29.jpg/512px-Trousers%2C_dress_%28AM_1960.022-8%29.jpg",
+      "isFavorite" : false,
+      "price" : 101.0,
+      "title" : "Trousers"
+    },
+    "-MAWecrPv7Kiw4QmFr0C" : {
+      "description" : "Warm and cozy - exactly what you need for the winter.",
+      "imageUrl" : "https://live.staticflickr.com/4043/4438260868_cc79b3369d_z.jpg",
+      "isFavorite" : false,
+      "price" : 33.0,
+      "title" : "Yellow Scarf"
+    }
+  }
+}

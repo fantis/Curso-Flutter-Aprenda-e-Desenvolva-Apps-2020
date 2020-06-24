@@ -90,36 +90,32 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
     });
 
     final productsProvider = Provider.of<Products>(context, listen: false);
-    if (_formData['id'] == null) {
-      try {
+    try {
+      if (_formData['id'] == null) {
         await productsProvider.addProduct(product);
-        Navigator.of(context).pop();
-      } catch (error) {
-        await showDialog<Null>(
-          context: context,
-          builder: (ctx) => AlertDialog(
-            title: Text('Ocorreu um erro'),
-            content:
-                Text('Ocorreu erro ao salvar o produto: ${error.toString()}'),
-            actions: <Widget>[
-              FlatButton(
-                child: Text('Ok'),
-                onPressed: () => Navigator.of(context).pop(),
-              ),
-            ],
-          ),
-        );
-      } finally {
-        setState(() {
-          this.isLoading = false;
-        });
+      } else {
+        productsProvider.updateProduct(product);
       }
-    } else {
-      productsProvider.updateProduct(product);
-      setState(() {
-        this.isLoading = true;
-      });
       Navigator.of(context).pop();
+    } catch (error) {
+      await showDialog<Null>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: Text('Ocorreu um erro'),
+          content:
+              Text('Ocorreu erro ao salvar o produto: ${error.toString()}'),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('Ok'),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ],
+        ),
+      );
+    } finally {
+      setState(() {
+        this.isLoading = false;
+      });
     }
   }
 
