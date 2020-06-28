@@ -1,7 +1,9 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
+import 'package:shop/data/store.dart';
 import 'package:shop/exceptions/authenticationException.dart';
 
 class Authentication with ChangeNotifier {
@@ -13,20 +15,24 @@ class Authentication with ChangeNotifier {
   String _userId;
   String _token;
   DateTime _expireDate;
+  Timer _logoutTimer;
 
   bool get isAuthenticate {
+    print("Authentication: ${token != null}");
     return token != null;
   }
 
   String get userId {
-    print(isAuthenticate);
-    print(_userId);
-    print('==============');
-
     return isAuthenticate ? this._userId : null;
   }
 
   String get token {
+    print("get token");
+    print(_token);
+    print(_expireDate);
+    print(DateTime.now());
+    // print(_expireDate.isAfter(DateTime.now()));
+
     if (_token != null &&
         _expireDate != null &&
         _expireDate.isAfter(DateTime.now())) {
@@ -57,15 +63,22 @@ class Authentication with ChangeNotifier {
     } else {
       this._token = responseBody["idToken"];
       this._userId = responseBody["localId"];
-      print('_authenticate 1');
-      print(_token);
-      print(_userId);
-      print('_authenticate 2');
       this._expireDate = DateTime.now().add(
         Duration(
           seconds: int.parse(responseBody["expiresIn"]),
         ),
       );
+
+      Store.saveMap(
+        'userData',
+        {
+          "token": this._token,
+          "userId": this._userId,
+          "expireDate": this._expireDate.toIso8601String(),
+        },
+      );
+
+      this._autoLogout();
 
       notifyListeners();
     }
@@ -79,5 +92,66 @@ class Authentication with ChangeNotifier {
 
   Future<void> login(String email, String password) async {
     return this._authenticate(email, password, "signInWithPassword");
+  }
+
+  Future<void> tryAutoLogin() async {
+    print('tryAutoLogin 1');
+    if (this.isAuthenticate) {
+      return Future.value();
+    }
+
+    print('tryAutoLogin 2');
+    final userData = await Store.getMap('userData');
+    if (userData == null) {
+      return Future.value();
+    }
+
+    print('tryAutoLogin 3');
+    final expireDate = DateTime.parse(userData['expireDate']);
+    if (expireDate.isBefore(DateTime.now())) {
+      return Future.value();
+    }
+
+    print('tryAutoLogin 4');
+    print(userData["userId"]);
+    print(userData["token"]);
+    print(userData["expireDate"]);
+    print('tryAutoLogin 5');
+
+    this._userId = userData["userId"];
+    this._token = userData["token "];
+    this._expireDate = expireDate;
+
+    print('tryAutoLogin 6');
+    this._autoLogout();
+    this.notifyListeners();
+
+    print('tryAutoLogin 7');
+    return Future.value();
+  }
+
+  void logout() {
+    this._token = null;
+    this._userId = null;
+    this._expireDate = null;
+
+    if (this._logoutTimer != null) {
+      this._logoutTimer.cancel();
+      this._logoutTimer = null;
+    }
+
+    Store.remove('userData');
+
+    notifyListeners();
+  }
+
+  void _autoLogout() {
+    if (this._logoutTimer != null) {
+      this._logoutTimer.cancel();
+    }
+
+    final timeToLogout = _expireDate.difference(DateTime.now()).inSeconds;
+
+    this._logoutTimer = Timer(Duration(seconds: timeToLogout), this.logout);
   }
 }

@@ -1,13 +1,11 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:shop/widgets/authenticationCard.dart';
+import 'package:shop/widgets/auth_card.dart';
 
-class AuthenticationScreen extends StatelessWidget {
+class AuthScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    print("AuthenticationScreen 1");
-
     return Scaffold(
       body: Stack(
         children: <Widget>[
@@ -30,25 +28,23 @@ class AuthenticationScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 Container(
-                  margin: EdgeInsets.only(
-                    bottom: 20.0,
-                  ),
+                  margin: EdgeInsets.only(bottom: 20.0),
                   padding: EdgeInsets.symmetric(
                     vertical: 8,
                     horizontal: 70,
                   ),
-                  // o .. é o cascade operator
                   transform: Matrix4.rotationZ(-8 * pi / 180)..translate(-10.0),
                   decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: Colors.deepOrange.shade900,
-                      boxShadow: [
-                        BoxShadow(
-                          blurRadius: 8,
-                          color: Colors.black26,
-                          offset: Offset(0, 5),
-                        )
-                      ]),
+                    borderRadius: BorderRadius.circular(20),
+                    color: Colors.deepOrange.shade900,
+                    boxShadow: [
+                      BoxShadow(
+                        blurRadius: 8,
+                        color: Colors.black26,
+                        offset: Offset(0, 2),
+                      ),
+                    ],
+                  ),
                   child: Text(
                     'Minha Loja',
                     style: TextStyle(
@@ -58,7 +54,7 @@ class AuthenticationScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                AuthenticationCard(),
+                AuthCard(),
               ],
             ),
           ),

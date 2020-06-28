@@ -1,9 +1,11 @@
 import 'dart:convert';
+import 'dart:math';
 
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:shop/providers/cart.dart';
-import 'package:shop/util/constants.dart';
+import 'package:shop/utils/constants.dart';
+
+import './cart.dart';
 
 class Order {
   final String id;
@@ -12,57 +14,50 @@ class Order {
   final DateTime date;
 
   Order({
-    @required this.id,
-    @required this.total,
-    @required this.products,
-    @required this.date,
+    this.id,
+    this.total,
+    this.products,
+    this.date,
   });
 }
 
 class Orders with ChangeNotifier {
-  final String _baseUrl = '${Constants.BASE_API_URL}orders';
-  final String _token;
-  final String _userId;
+  final String _baseUrl = '${Constants.BASE_API_URL}/orders';
   List<Order> _items = [];
+  String _token;
+  String _userId;
 
-  Orders([
-    this._token,
-    this._userId,
-    this._items = const [],
-  ]);
+  Orders([this._token, this._userId, this._items = const []]);
 
   List<Order> get items {
     return [..._items];
   }
 
   int get itemsCount {
-    return this._items.length;
+    return _items.length;
   }
 
   Future<void> loadOrders() async {
     List<Order> loadedItems = [];
-
     final response = await http.get("$_baseUrl/$_userId.json?auth=$_token");
     Map<String, dynamic> data = json.decode(response.body);
-
-    loadedItems.clear();
 
     if (data != null) {
       data.forEach((orderId, orderData) {
         loadedItems.add(
-          new Order(
+          Order(
             id: orderId,
             total: orderData['total'],
+            date: DateTime.parse(orderData['date']),
             products: (orderData['products'] as List<dynamic>).map((item) {
               return CartItem(
                 id: item['id'],
-                productId: item['productId'],
-                title: item['title'],
-                quantity: item['quantity'],
                 price: item['price'],
+                productId: item['productId'],
+                quantity: item['quantity'],
+                title: item['title'],
               );
             }).toList(),
-            date: DateTime.parse(orderData['date']),
           ),
         );
       });
@@ -74,17 +69,10 @@ class Orders with ChangeNotifier {
   }
 
   Future<void> addOrder(Cart cart) async {
-    // final anotherTotal = cart.items.values.toList().fold(
-    //       0.0,
-    //       (previousValue, element) =>
-    //           previousValue + (element.price * element.quantity),
-    //     );
-
     final date = DateTime.now();
-
     final response = await http.post(
       "$_baseUrl/$_userId.json?auth=$_token",
-      body: jsonEncode({
+      body: json.encode({
         'total': cart.totalAmount,
         'date': date.toIso8601String(),
         'products': cart.items.values
@@ -99,15 +87,15 @@ class Orders with ChangeNotifier {
       }),
     );
 
-    this._items.insert(
-          0,
-          new Order(
-            id: json.decode(response.body)['name'],
-            total: cart.totalAmount,
-            products: cart.items.values.toList(),
-            date: DateTime.now(),
-          ),
-        );
+    _items.insert(
+      0,
+      Order(
+        id: json.decode(response.body)['name'],
+        total: cart.totalAmount,
+        date: date,
+        products: cart.items.values.toList(),
+      ),
+    );
 
     notifyListeners();
   }

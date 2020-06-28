@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shop/providers/authentication.dart';
-import 'package:shop/util/appRoutes.dart';
+import 'package:shop/providers/auth.dart';
+import '../utils/app_routes.dart';
 
 class AppDrawer extends StatelessWidget {
   @override
@@ -10,7 +10,7 @@ class AppDrawer extends StatelessWidget {
       child: Column(
         children: <Widget>[
           AppBar(
-            title: Text('Bem vindo usuário!'),
+            title: Text('Bem vindo Usuário!'),
             automaticallyImplyLeading: false,
           ),
           Divider(),
@@ -19,7 +19,7 @@ class AppDrawer extends StatelessWidget {
             title: Text('Loja'),
             onTap: () {
               Navigator.of(context).pushReplacementNamed(
-                AppRoutes.AUTHENTICATION_OR_HOME,
+                AppRoutes.AUTH_HOME,
               );
             },
           ),
@@ -48,7 +48,7 @@ class AppDrawer extends StatelessWidget {
             leading: Icon(Icons.exit_to_app),
             title: Text('Sair'),
             onTap: () {
-              Provider.of<Authentication>(context, listen: false).logout();
+              Provider.of<Auth>(context, listen: false).logout();
             },
           ),
         ],
