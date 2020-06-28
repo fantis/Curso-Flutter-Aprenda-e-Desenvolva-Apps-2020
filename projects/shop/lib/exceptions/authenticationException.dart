@@ -3,7 +3,7 @@ class AuthenticationException implements Exception {
     "EMAIL_EXISTS": "E-mail já cadastrado.",
     "OPERATION_NOT_ALLOWED": "Password sign-in is disabled for this project.",
     "TOO_MANY_ATTEMPTS_TRY_LATER":
-        "We have blocked all requests from this device due to unusual activity. Try again later.",
+        "E-mail bloqueado devido a excesso de tentativas erradas. Tente mais tarde.",
     "EMAIL_NOT_FOUND": "E-mail não encontrado!",
     "INVALID_PASSWORD": "Senha inválida.",
     "USER_DISABLED": "E-mail desativado pelo administrador do sistema.",

@@ -8,8 +8,15 @@ import 'package:shop/util/constants.dart';
 
 class Products with ChangeNotifier {
   final String _baseUrl = '${Constants.BASE_API_URL}products';
-
   List<Product> _items = [];
+  String _token;
+  String _userId;
+
+  Products([
+    this._token,
+    this._userId,
+    this._items = const [],
+  ]);
 
   List<Product> get items => [..._items];
 
@@ -22,13 +29,20 @@ class Products with ChangeNotifier {
   }
 
   Future<void> loadProducts() async {
-    final response = await http.get("$_baseUrl.json");
+    final response = await http.get("$_baseUrl.json?auth=$_token");
     Map<String, dynamic> data = json.decode(response.body);
+
+    final favoriteResponse = await http.get(
+        "${Constants.BASE_API_URL}userFavorites/$_userId.json?auth=$_token");
+    final favoriteMap = json.decode(favoriteResponse.body);
 
     this._items.clear();
 
     if (data != null) {
       data.forEach((productId, productData) {
+        final isFavorite =
+            favoriteMap == null ? false : favoriteMap[productId] ?? false;
+
         this._items.add(
               new Product(
                 id: productId,
@@ -36,7 +50,7 @@ class Products with ChangeNotifier {
                 description: productData['description'],
                 price: productData['price'],
                 imageUrl: productData['imageUrl'],
-                isFavorite: productData['isFavorite'],
+                isFavorite: isFavorite,
               ),
             );
       });
@@ -47,14 +61,13 @@ class Products with ChangeNotifier {
 
   Future<void> addProduct(Product product) async {
     final response = await http.post(
-      "${_baseUrl}.json",
+      "${_baseUrl}.json?auth=$_token",
       body: json.encode(
         {
           'title': product.title,
           'description': product.description,
           'price': product.price,
           'imageUrl': product.imageUrl,
-          'isFavorite': product.isFavorite,
         },
       ),
     );
@@ -77,7 +90,7 @@ class Products with ChangeNotifier {
     final index = this._items.indexWhere((prod) => prod.id == product.id);
     if (index >= 0) {
       await http.patch(
-        "$_baseUrl/${product.id}.json",
+        "$_baseUrl/${product.id}.json?auth=$_token",
         body: json.encode({
           'title': product.title,
           'description': product.description,
@@ -97,7 +110,8 @@ class Products with ChangeNotifier {
       this._items.remove(product);
       notifyListeners();
 
-      final response = await http.delete("$_baseUrl/${product.id}.json");
+      final response =
+          await http.delete("$_baseUrl/${product.id}.json?auth=$_token");
 
       if (response.statusCode >= 400) {
         this._items.insert(index, product);

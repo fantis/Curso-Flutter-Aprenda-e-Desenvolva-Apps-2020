@@ -6,6 +6,8 @@ import 'package:shop/providers/products.dart';
 import 'package:shop/providers/authentication.dart';
 
 import 'package:shop/util/appRoutes.dart';
+
+import 'package:shop/views/authenticationHomeScreen.dart';
 import 'package:shop/views/authenticationScreen.dart';
 import 'package:shop/views/ordersScreen.dart';
 import 'package:shop/views/productDetailScreen.dart';
@@ -22,16 +24,25 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
+          create: (_) => new Authentication(),
+        ),
+        ChangeNotifierProxyProvider<Authentication, Products>(
           create: (_) => new Products(),
+          update: (ctx, authentication, previousProducts) => new Products(
+            authentication.token,
+            authentication.userId,
+            previousProducts.items,
+          ),
         ),
         ChangeNotifierProvider(
           create: (_) => new Cart(),
         ),
-        ChangeNotifierProvider(
-          create: (_) => new Orders(),
-        ),
-        ChangeNotifierProvider(
-          create: (_) => new Authentication(),
+        ChangeNotifierProxyProvider<Authentication, Orders>(
+          create: (_) => new Orders(null, []),
+          update: (ctx, authentication, previousOrders) => new Orders(
+            authentication.token,
+            previousOrders.items,
+          ),
         ),
       ],
       child: MaterialApp(
@@ -41,10 +52,9 @@ class MyApp extends StatelessWidget {
           accentColor: Colors.deepOrange,
           fontFamily: 'Lato',
         ),
-        // home: ProductOverviewScreen(),
         routes: {
-          AppRoutes.AUTHENTICATION: (ctx) => AuthenticationScreen(),
-          AppRoutes.HOME: (ctx) => ProductOverviewScreen(),
+          AppRoutes.AUTHENTICATION_OR_HOME: (ctx) =>
+              AuthenticationOrHomeScreen(),
           AppRoutes.PRODUCT_DETAIL: (ctx) => ProductDetailScreen(),
           AppRoutes.CART: (ctx) => CartScreen(),
           AppRoutes.ORDERS: (ctx) => OrdersScreen(),
